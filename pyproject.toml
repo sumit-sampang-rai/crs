@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.11, <3.12"
 streamlit = "^1.29.0"
 requests = "^2.31.0"
+pandas = "^2.2.0"
 
 
 [build-system]
