@@ -6,7 +6,7 @@ authors = []
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.12"
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
 streamlit = "^1.31.0"
 pandas = "^2.2.0"
 requests = "^2.31.0"
