@@ -96,17 +96,56 @@ legend = dict(
     x=1
 )
 
-fig_df = df[
-    (df['draw_date'] >= date_filter[0]) &
-    (df['draw_date'] <= date_filter[1])
+fig_df = df.copy()
+
+fig_df = fig_df[
+    (df["draw_date"] >= date_filter[0]) &
+    (df["draw_date"] <= date_filter[1])
 ]
 
-fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name")
-fig.update_layout(legend=legend, legend_title_text=None)
+type_tab, type_group_tab = st.tabs([
+    "Round Type",
+    "Round Type Group"
+])
 
-st.plotly_chart(fig, use_container_width=True)
+with type_tab:
+    fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name")
+    fig.update_layout(legend=legend, legend_title_text=None)
 
-fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name_full")
-fig.update_layout(legend=legend, legend_title_text=None)
+    st.plotly_chart(fig, use_container_width=True)
 
-st.plotly_chart(fig, use_container_width=True)
+    agg_draw_name_df = fig_df.copy()
+    agg_draw_name_df["draw_year_month"] = agg_draw_name_df["draw_date"].dt.strftime("%Y-%b")
+    agg_draw_name_df = agg_draw_name_df.groupby(
+        [
+            "draw_year_month",
+            "draw_name",
+        ],
+        sort=False,
+    )["draw_size"].sum().reset_index().sort_index(ascending=False).reset_index()
+
+    fig = px.bar(agg_draw_name_df, x="draw_year_month", y="draw_size", color="draw_name")
+    fig.update_layout(legend=legend, legend_title_text=None)
+    fig.update_xaxes(type="category")
+    st.plotly_chart(fig, use_container_width=True)
+
+with type_group_tab:
+    fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name_full")
+    fig.update_layout(legend=legend, legend_title_text=None)
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    agg_draw_name_full_df = fig_df.copy()
+    agg_draw_name_full_df["draw_year_month"] = agg_draw_name_full_df["draw_date"].dt.strftime("%Y-%b")
+    agg_draw_name_full_df = agg_draw_name_full_df.groupby(
+        [
+            "draw_year_month",
+            "draw_name_full",
+        ],
+        sort=False,
+    )["draw_size"].sum().reset_index().sort_index(ascending=False).reset_index()
+
+    fig = px.bar(agg_draw_name_full_df, x="draw_year_month", y="draw_size", color="draw_name_full")
+    fig.update_layout(legend=legend, legend_title_text=None)
+    fig.update_xaxes(type="category")
+    st.plotly_chart(fig, use_container_width=True)
