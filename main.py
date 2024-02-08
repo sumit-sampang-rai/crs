@@ -73,26 +73,40 @@ df = df.filter(
     columns={k: v["rename"] for k, v in COLUMNS.items()}
 )
 
-min_datetime = df["draw_date"].min().to_pydatetime()
-max_datetime = df["draw_date"].max().to_pydatetime()
+with st.sidebar:
+    min_datetime = df["draw_date"].min().to_pydatetime()
+    max_datetime = df["draw_date"].max().to_pydatetime()
 
-date_filter = st.slider(
-    "Date filter:",
-    min_value=min_datetime,
-    max_value=max_datetime,
-    value=(
-        (min_datetime.replace(year=max_datetime.year - 3)),
-        max_datetime
-    ),
-    format="YYYY-MM-DD"
+    date_filter = st.slider(
+        "Date filter:",
+        min_value=min_datetime,
+        max_value=max_datetime,
+        value=(
+            (min_datetime.replace(year=max_datetime.year - 3)),
+            max_datetime
+        ),
+        format="YYYY-MM-DD"
+    )
+
+legend = dict(
+    orientation="h",
+    yanchor="bottom",
+    y=1,
+    xanchor="right",
+    x=1
 )
 
-fig_df = df[(df['draw_date'] >= date_filter[0]) & (df['draw_date'] <= date_filter[1])]
+fig_df = df[
+    (df['draw_date'] >= date_filter[0]) &
+    (df['draw_date'] <= date_filter[1])
+]
 
 fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name")
+fig.update_layout(legend=legend, legend_title_text=None)
 
 st.plotly_chart(fig, use_container_width=True)
 
 fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name_full")
+fig.update_layout(legend=legend, legend_title_text=None)
 
 st.plotly_chart(fig, use_container_width=True)
