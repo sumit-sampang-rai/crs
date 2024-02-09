@@ -114,10 +114,14 @@ legend = dict(
 fig_df = df.copy()
 
 fig_df = fig_df[
-    ((df["draw_date"] >= date_filter[0]) &
-    (df["draw_date"] <= date_filter[1])) &
-    ((df["draw_crs"] >= crs_filter[0]) &
-    (df["draw_crs"] <= crs_filter[1]))
+    (
+        (df["draw_date"] >= date_filter[0]) &
+        (df["draw_date"] <= date_filter[1])
+    ) &
+    (
+        (df["draw_crs"] >= crs_filter[0]) &
+        (df["draw_crs"] <= crs_filter[1])
+    )
 ]
 
 draws_tab, backlog_tab, type_tab, type_group_tab = st.tabs([
@@ -128,7 +132,8 @@ draws_tab, backlog_tab, type_tab, type_group_tab = st.tabs([
 ])
 
 with draws_tab:
-    draws_df = fig_df[[
+    draws_df = fig_df.copy()
+    draws_df = draws_df[[
         "draw_number",
         "draw_date",
         "draw_name",
@@ -139,6 +144,7 @@ with draws_tab:
     st.dataframe(draws_df, hide_index=True)
 
 with backlog_tab:
+    backlog_df = fig_df.copy()
     backlog_df = pd.melt(
         fig_df,
         id_vars="draw_date",
