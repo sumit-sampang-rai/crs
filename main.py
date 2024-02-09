@@ -79,6 +79,8 @@ df = df.filter(
 with st.sidebar:
     min_datetime = df["draw_date"].min().to_pydatetime()
     max_datetime = df["draw_date"].max().to_pydatetime()
+    min_draw_crs = df["draw_crs"].min()
+    max_draw_crs = df["draw_crs"].max()
 
     date_filter = st.slider(
         "Date filter:",
@@ -89,6 +91,16 @@ with st.sidebar:
             max_datetime
         ),
         format="YYYY-MM-DD"
+    )
+
+    crs_filter = st.slider(
+        "CRS filter:",
+        min_value=min_draw_crs,
+        max_value=max_draw_crs,
+        value=(
+            min_draw_crs,
+            max_draw_crs
+        )
     )
 
 legend = dict(
@@ -102,8 +114,10 @@ legend = dict(
 fig_df = df.copy()
 
 fig_df = fig_df[
-    (df["draw_date"] >= date_filter[0]) &
-    (df["draw_date"] <= date_filter[1])
+    ((df["draw_date"] >= date_filter[0]) &
+    (df["draw_date"] <= date_filter[1])) &
+    ((df["draw_crs"] >= crs_filter[0]) &
+    (df["draw_crs"] <= crs_filter[1]))
 ]
 
 draws_tab, backlog_tab, type_tab, type_group_tab = st.tabs([
@@ -153,7 +167,8 @@ with backlog_tab:
     fig.update_layout(legend=legend, legend_title_text=None)
 
     for i in range(11):
-        fig.data[i].update(visible="legendonly")
+        if fig.data:
+            fig.data[i].update(visible="legendonly")
 
     st.plotly_chart(fig, use_container_width=True)
 
