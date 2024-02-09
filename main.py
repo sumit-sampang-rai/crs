@@ -106,11 +106,23 @@ fig_df = fig_df[
     (df["draw_date"] <= date_filter[1])
 ]
 
-backlog_tab, type_tab, type_group_tab = st.tabs([
+draws_tab, backlog_tab, type_tab, type_group_tab = st.tabs([
+    "Draws",
     "Backlog",
     "Round Type",
     "Round Type Group"
 ])
+
+with draws_tab:
+    draws_df = fig_df[[
+        "draw_number",
+        "draw_date",
+        "draw_name",
+        "draw_size",
+        "draw_crs",
+    ]]
+    draws_df["draw_date"] = draws_df["draw_date"].dt.strftime("%Y-%m-%d")
+    st.dataframe(draws_df, hide_index=True)
 
 with backlog_tab:
     backlog_df = pd.melt(
