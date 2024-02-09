@@ -1,4 +1,7 @@
+import warnings
 from datetime import timedelta
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import pandas as pd
 import plotly.express as px
@@ -133,21 +136,6 @@ with backlog_tab:
             "601_1200",
         ]
     )
-
-    # fig = px.area(backlog_df[
-    #     backlog_df["range"].isin([
-    #         "451_460",
-    #         "461_470",
-    #         "471_480",
-    #         "481_490",
-    #         "491_500",
-    #         "501_600",
-    #         "601_1200",
-    #     ])
-    # ], x="draw_date", y="candidates", color="range")
-    # fig.update_layout(legend=legend, legend_title_text=None)
-    #
-    # st.plotly_chart(fig, use_container_width=True)
 
     fig = px.area(backlog_df, x="draw_date", y="candidates", color="range")
     fig.update_layout(legend=legend, legend_title_text=None)
