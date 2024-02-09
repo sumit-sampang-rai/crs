@@ -82,7 +82,7 @@ with st.sidebar:
         min_value=min_datetime,
         max_value=max_datetime,
         value=(
-            (min_datetime.replace(year=max_datetime.year - 3)),
+            (min_datetime.replace(year=max_datetime.year - 2)),
             max_datetime
         ),
         format="YYYY-MM-DD"
@@ -103,10 +103,59 @@ fig_df = fig_df[
     (df["draw_date"] <= date_filter[1])
 ]
 
-type_tab, type_group_tab = st.tabs([
+backlog_tab, type_tab, type_group_tab = st.tabs([
+    "Backlog",
     "Round Type",
     "Round Type Group"
 ])
+
+with backlog_tab:
+    backlog_df = pd.melt(
+        fig_df,
+        id_vars="draw_date",
+        var_name="range",
+        value_name="candidates",
+        value_vars=[
+            "0_300",
+            "301_350",
+            "351_400",
+            "401_410",
+            "411_420",
+            "421_430",
+            "431_440",
+            "441_450",
+            "451_460",
+            "461_470",
+            "471_480",
+            "481_490",
+            "491_500",
+            "501_600",
+            "601_1200",
+        ]
+    )
+
+    # fig = px.area(backlog_df[
+    #     backlog_df["range"].isin([
+    #         "451_460",
+    #         "461_470",
+    #         "471_480",
+    #         "481_490",
+    #         "491_500",
+    #         "501_600",
+    #         "601_1200",
+    #     ])
+    # ], x="draw_date", y="candidates", color="range")
+    # fig.update_layout(legend=legend, legend_title_text=None)
+    #
+    # st.plotly_chart(fig, use_container_width=True)
+
+    fig = px.area(backlog_df, x="draw_date", y="candidates", color="range")
+    fig.update_layout(legend=legend, legend_title_text=None)
+
+    for i in range(11):
+        fig.data[i].update(visible="legendonly")
+
+    st.plotly_chart(fig, use_container_width=True)
 
 with type_tab:
     fig = px.line(fig_df, x="draw_date", y="draw_crs", color="draw_name")
